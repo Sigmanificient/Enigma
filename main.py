@@ -19,6 +19,7 @@ ROTORS = {
     'IIIC': Rotor('UQNTLSZFMREHDPXKIBVYGJCWOA')
 }
 
+
 class Reflector:
 
     def __init__(self):
@@ -29,6 +30,7 @@ class Reflector:
 
 
 class Enigma:
+    charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
     def __init__(self):
         self.rotors = []
@@ -46,19 +48,29 @@ class Enigma:
         return self
 
     def write(self, keys):
-        for key in keys:
-            self.__handle_plugboard(self.__handle_key)(key)
+        return (self.__handle_key(key) for key in keys)
 
-    def __handle_plugboard(self, func):
-        def inner(key):
+    @staticmethod
+    def __handle_plugboard(func):
+        def inner(self, key):
             int_char = self.plugboard.get(key, key)
-            r = func(int_char)
+            r = func(self, int_char)
             return self.plugboard.get(r, r)
         return inner
 
+    @__handle_plugboard
     def __handle_key(self, key):
-        print(key)
-        return key
+        key = key.upper()
+
+        if key not in self.charset:
+            return key
+
+        int_char = self.charset.index(key)
+
+        int_char += 10
+        int_char %= 26
+
+        return self.charset[int_char]
 
 
 def main():
@@ -70,7 +82,7 @@ def main():
         .set_plugboard('AB', 'ON', 'QR', 'ZY')
     )
 
-    enigma.write('Hello World')
+    print(''.join(enigma.write('Hello World')))
 
 
 if __name__ == '__main__':
