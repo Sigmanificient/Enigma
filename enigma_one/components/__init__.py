@@ -1,7 +1,7 @@
 from typing import Dict, Any
 
-from enigma_one.reflector import Reflector as _Reflector
-from enigma_one.rotor import Rotor as _Rotor
+from enigma_one.components.reflector import Reflector as _Reflector
+from enigma_one.components.rotor import Rotor as _Rotor
 
 
 class _Component:
