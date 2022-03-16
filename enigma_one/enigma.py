@@ -1,57 +1,7 @@
 from string import ascii_uppercase
 
-
-DEBUG = False
-
-
-def debug(func):
-    if not DEBUG:
-        return func
-
-    def wrapper(self, int_char):
-        result = func(self, int_char)
-        print(f'{self.__class__.__name__} -> {ascii_uppercase[result]}')
-        return result
-
-    return wrapper
-
-
-class Rotor:
-
-    def __init__(self, mapping, turnover_char):
-        self.mapping = tuple(ascii_uppercase.index(char) for char in mapping)
-        self.rotation_point = ascii_uppercase.index(turnover_char)
-        self.rotation = 0
-
-    def rotate(self, previous_rotor):
-        if not previous_rotor:
-            return False
-
-        self.rotation += 1
-        self.rotation %= 26
-
-        return self.rotation == self.rotation_point
-
-    @debug
-    def process(self, int_char):
-        return self.mapping[(int_char + self.rotation) % 26]
-
-
-ROTORS = {
-    'I': Rotor('JGDQOXUSCAMIFRVTPNEWKBLZYH', 'Q'),
-    'II': Rotor('NTZPSFBOKMWRCJDIVLAEYUXHGQ', 'E'),
-    'III': Rotor('JVIUBHTCDYAKEQZPOSGXNRMWFL', 'V'),
-}
-
-
-class Reflector:
-
-    def __init__(self):
-        self.mapping = tuple(ascii_uppercase.index(char) for char in 'EJMZALYXVBWFCRQUONTSPIKHGD')
-
-    @debug
-    def process(self, int_char):
-        return self.mapping[int_char]
+from enigma_one.reflector import Reflector
+from enigma_one.utils import DEBUG
 
 
 class Enigma:
@@ -115,19 +65,3 @@ class Enigma:
             int_char = rotor.process(int_char)
 
         return ascii_uppercase[int_char]
-
-
-def main():
-    enigma = (
-        Enigma()
-            .add_rotor(ROTORS['I'], 6)
-            .add_rotor(ROTORS['II'], 14)
-            .add_rotor(ROTORS['III'], 2)
-            .set_plugboard('bq', 'cr', 'di', 'ej', 'kw', 'mt', 'os', 'px', 'uz', 'gh')
-    )
-
-    print(''.join(enigma.write('Hello World')))
-
-
-if __name__ == '__main__':
-    main()
