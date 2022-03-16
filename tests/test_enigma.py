@@ -1,5 +1,5 @@
 from enigma_one.enigma import Enigma
-from enigma_one.components import Rotor
+from enigma_one.components import Rotor, Reflector
 
 
 def test_enigma():
@@ -8,6 +8,7 @@ def test_enigma():
         .add_rotor(Rotor.I, 1)
         .add_rotor(Rotor.II, 17)
         .add_rotor(Rotor.III, 12)
+        .set_reflector(Reflector.UKW_A)
         .set_plugboard('bq', 'cr', 'di', 'ej', 'kw', 'mt', 'os', 'px', 'uz', 'gh')
     )
 

@@ -8,12 +8,16 @@ class Enigma:
 
     def __init__(self):
         self.rotors = []
-        self.reflector = Reflector()
+        self.reflector = None
         self.plugboard = {}
 
     def add_rotor(self, rotor, position):
         rotor.rotation = position
         self.rotors.append(rotor)
+        return self
+
+    def set_reflector(self, reflector):
+        self.reflector = reflector
         return self
 
     def set_plugboard(self, *swaps):
