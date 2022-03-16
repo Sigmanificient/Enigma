@@ -1,12 +1,15 @@
+from typing import Dict, Any
+
 from enigma_one.reflector import Reflector as _Reflector
 from enigma_one.rotor import Rotor as _Rotor
 
 
 class _Component:
-    def __init__(self, components):
+
+    def __init__(self, components: Dict[str, Any]):
         self.components = components
 
-    def __getattribute__(self, item):
+    def __getattribute__(self, item: str) -> Any:
         return super().__getattribute__('components')[item]
 
 

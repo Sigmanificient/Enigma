@@ -12,5 +12,5 @@ def test_enigma():
         .set_plugboard('bq', 'cr', 'di', 'ej', 'kw', 'mt', 'os', 'px', 'uz', 'gh')
     )
 
-    assert enigma.write('HELLO WORLD') == 'KJTNQ TIPSW'
-    assert enigma.write('KJTNQ TIPSW') == 'HELLO WORLD'
+    assert enigma.run('HELLO WORLD') == 'KJTNQ TIPSW'
+    assert enigma.run('KJTNQ TIPSW') == 'HELLO WORLD'

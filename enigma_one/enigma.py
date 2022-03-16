@@ -1,7 +1,12 @@
-from string import ascii_uppercase
+from __future__ import annotations
 
-from enigma_one.reflector import Reflector
+from string import ascii_uppercase
+from typing import Tuple, List, Callable, Dict
+
+from enigma_one.components import Rotor, Reflector
 from enigma_one.utils import DEBUG
+
+Plugboard = Dict[str, str]
 
 
 class Enigma:
@@ -11,23 +16,23 @@ class Enigma:
         self.reflector = None
         self.plugboard = {}
 
-    def add_rotor(self, rotor, position):
+    def add_rotor(self, rotor: Rotor, position: int) -> Enigma:
         rotor.rotation = position
         self.rotors.append(rotor)
         return self
 
-    def set_reflector(self, reflector):
+    def set_reflector(self, reflector: Reflector) -> Enigma:
         self.reflector = reflector
         return self
 
-    def set_plugboard(self, *swaps):
+    def set_plugboard(self, *swaps: Tuple[str, ...]) -> Enigma:
         for left, right in swaps:
             self.plugboard[left] = right
             self.plugboard[right] = left
         return self
 
-    def write(self, keys):
-        output_buffer = []
+    def run(self, keys: str) -> str:
+        output_buffer: List[str] = []
 
         for key in keys:
             output_buffer.append(self.__handle_key(key.upper()))
@@ -42,10 +47,10 @@ class Enigma:
             state = rotor.rotate(state)
 
     @staticmethod
-    def __handle_plugboard(func):
-        def inner(self, key):
-            int_char = self.plugboard.get(key, key)
-            r = func(self, int_char)
+    def __handle_plugboard(func) -> Callable[[Enigma, str], str]:
+        def inner(self, key: str) -> str:
+            int_char: int = self.plugboard.get(key, key)
+            r: str = func(self, int_char)
             return self.plugboard.get(r, r)
 
         return inner
