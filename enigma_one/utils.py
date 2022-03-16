@@ -1,6 +1,6 @@
 from string import ascii_uppercase
 
-DEBUG = False
+DEBUG = True
 
 
 def debug(func):

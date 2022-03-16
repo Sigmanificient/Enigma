@@ -1,14 +1,15 @@
 from enigma_one.enigma import Enigma
-from enigma_one.rotors import ROTORS
+from enigma_one.rotors import ROTOR_I, ROTOR_II, ROTOR_III
 
 
 def test_enigma():
     enigma = (
         Enigma()
-        .add_rotor(ROTORS['I'], 1)
-        .add_rotor(ROTORS['II'], 17)
-        .add_rotor(ROTORS['III'], 12)
+        .add_rotor(ROTOR_I, 1)
+        .add_rotor(ROTOR_II, 17)
+        .add_rotor(ROTOR_III, 12)
+        .set_plugboard('bq', 'cr', 'di', 'ej', 'kw', 'mt', 'os', 'px', 'uz', 'gh')
     )
 
-    assert enigma.write('hello world') == 'kjtnq tipsw'
-    assert enigma.write('kjtnq tipsw') == 'hello world'
+    assert enigma.write('HELLO WORLD') == 'KJTNQ TIPSW'
+    assert enigma.write('KJTNQ TIPSW') == 'HELLO WORLD'
