@@ -22,10 +22,3 @@ class Rotor:
     @debug
     def process(self, int_char):
         return self.mapping[(int_char + self.rotation) % 26]
-
-
-ROTOR_I = Rotor('EKMFLGDQVZNTOWYHXUSPAIBRCJ', 'Q')
-ROTOR_II = Rotor('AJDKSIRUXBLHWTMCQGZNPYFVOE', 'E')
-ROTOR_III = Rotor('BDFHJLCPRTXVZNYEIWGAKMUSQO', 'V')
-ROTOR_IV = Rotor('ESOVPZJAYQUIRHXLNFTGKDCMWB', 'J')
-ROTOR_V = Rotor('VZBRGITYUPSDNHLXAWMJQOFECK', 'Z')
