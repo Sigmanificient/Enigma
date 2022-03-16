@@ -18,14 +18,19 @@ def debug(func):
 
 class Rotor:
 
-    def __init__(self, mapping):
+    def __init__(self, mapping, turnover_char):
         self.mapping = tuple(ascii_uppercase.index(char) for char in mapping)
+        self.rotation_point = ascii_uppercase.index(turnover_char)
         self.rotation = 0
 
-    def rotate(self):
+    def rotate(self, previous_rotor):
+        if not previous_rotor:
+            return False
+
         self.rotation += 1
         self.rotation %= 26
-        return self.rotation
+
+        return self.rotation == self.rotation_point
 
     @debug
     def process(self, int_char):
@@ -33,16 +38,16 @@ class Rotor:
 
 
 ROTORS = {
-    'IC': Rotor('DMTWSILRUYQNKFEJCAZBPGXOHV'),
-    'IIC': Rotor('HQZGPJTMOBLNCIFDYAWVEUSRKX'),
-    'IIIC': Rotor('UQNTLSZFMREHDPXKIBVYGJCWOA')
+    'I': Rotor('JGDQOXUSCAMIFRVTPNEWKBLZYH', 'Q'),
+    'II': Rotor('NTZPSFBOKMWRCJDIVLAEYUXHGQ', 'E'),
+    'III': Rotor('JVIUBHTCDYAKEQZPOSGXNRMWFL', 'V'),
 }
 
 
 class Reflector:
 
     def __init__(self):
-        self.mapping = tuple(ascii_uppercase.index(char) for char in 'QYHOGNECVPUZTFDJAXWMKISRBL')
+        self.mapping = tuple(ascii_uppercase.index(char) for char in 'EJMZALYXVBWFCRQUONTSPIKHGD')
 
     @debug
     def process(self, int_char):
@@ -56,7 +61,8 @@ class Enigma:
         self.reflector = Reflector()
         self.plugboard = {}
 
-    def add_rotor(self, rotor):
+    def add_rotor(self, rotor, position):
+        rotor.rotation = position
         self.rotors.append(rotor)
         return self
 
@@ -67,7 +73,19 @@ class Enigma:
         return self
 
     def write(self, keys):
-        return (self.__handle_key(key.upper()) for key in keys)
+        output_buffer = []
+
+        for key in keys:
+            output_buffer.append(self.__handle_key(key.upper()))
+            self.__rotate_rotors()
+
+        return ''.join(output_buffer)
+
+    def __rotate_rotors(self):
+        state = 1
+
+        for rotor in self.rotors:
+            state = rotor.rotate(state)
 
     @staticmethod
     def __handle_plugboard(func):
@@ -102,10 +120,10 @@ class Enigma:
 def main():
     enigma = (
         Enigma()
-            .add_rotor(ROTORS['IC'])
-            .add_rotor(ROTORS['IIC'])
-            .add_rotor(ROTORS['IIIC'])
-            .set_plugboard('AB', 'ON', 'QR', 'ZY')
+            .add_rotor(ROTORS['I'], 6)
+            .add_rotor(ROTORS['II'], 14)
+            .add_rotor(ROTORS['III'], 2)
+            .set_plugboard('bq', 'cr', 'di', 'ej', 'kw', 'mt', 'os', 'px', 'uz', 'gh')
     )
 
     print(''.join(enigma.write('Hello World')))
