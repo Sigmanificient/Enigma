@@ -1,7 +1,10 @@
+from string import ascii_uppercase
+
+
 class Rotor:
 
     def __init__(self, mapping):
-        self.mapping = mapping
+        self.mapping = tuple(ascii_uppercase.index(char) for char in mapping)
         self.rotation = 0
 
     def rotate(self):
@@ -23,14 +26,13 @@ ROTORS = {
 class Reflector:
 
     def __init__(self):
-        self.mapping = []
+        self.mapping = tuple(ascii_uppercase.index(char) for char in 'QYHOGNECVPUZTFDJAXWMKISRBL')
 
     def process(self, int_char):
         return self.mapping[int_char]
 
 
 class Enigma:
-    charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
     def __init__(self):
         self.rotors = []
@@ -48,7 +50,7 @@ class Enigma:
         return self
 
     def write(self, keys):
-        return (self.__handle_key(key) for key in keys)
+        return (self.__handle_key(key.upper()) for key in keys)
 
     @staticmethod
     def __handle_plugboard(func):
@@ -60,17 +62,20 @@ class Enigma:
 
     @__handle_plugboard
     def __handle_key(self, key):
-        key = key.upper()
-
-        if key not in self.charset:
+        if key not in ascii_uppercase:
             return key
 
-        int_char = self.charset.index(key)
+        int_char = ascii_uppercase.index(key)
 
-        int_char += 10
-        int_char %= 26
+        for rotor in self.rotors:
+            int_char = rotor.process(int_char)
 
-        return self.charset[int_char]
+        int_char = self.reflector.process(int_char)
+
+        for rotor in reversed(self.rotors):
+            int_char = rotor.process(int_char)
+
+        return ascii_uppercase[int_char]
 
 
 def main():
