@@ -1,6 +1,21 @@
 from string import ascii_uppercase
 
 
+DEBUG = False
+
+
+def debug(func):
+    if not DEBUG:
+        return func
+
+    def wrapper(self, int_char):
+        result = func(self, int_char)
+        print(f'{self.__class__.__name__} -> {ascii_uppercase[result]}')
+        return result
+
+    return wrapper
+
+
 class Rotor:
 
     def __init__(self, mapping):
@@ -12,6 +27,7 @@ class Rotor:
         self.rotation %= 26
         return self.rotation
 
+    @debug
     def process(self, int_char):
         return self.mapping[(int_char + self.rotation) % 26]
 
@@ -28,6 +44,7 @@ class Reflector:
     def __init__(self):
         self.mapping = tuple(ascii_uppercase.index(char) for char in 'QYHOGNECVPUZTFDJAXWMKISRBL')
 
+    @debug
     def process(self, int_char):
         return self.mapping[int_char]
 
@@ -58,12 +75,16 @@ class Enigma:
             int_char = self.plugboard.get(key, key)
             r = func(self, int_char)
             return self.plugboard.get(r, r)
+
         return inner
 
     @__handle_plugboard
     def __handle_key(self, key):
         if key not in ascii_uppercase:
             return key
+
+        if DEBUG:
+            print('Processing key:', key)
 
         int_char = ascii_uppercase.index(key)
 
@@ -81,10 +102,10 @@ class Enigma:
 def main():
     enigma = (
         Enigma()
-        .add_rotor(ROTORS['IC'])
-        .add_rotor(ROTORS['IIC'])
-        .add_rotor(ROTORS['IIIC'])
-        .set_plugboard('AB', 'ON', 'QR', 'ZY')
+            .add_rotor(ROTORS['IC'])
+            .add_rotor(ROTORS['IIC'])
+            .add_rotor(ROTORS['IIIC'])
+            .set_plugboard('AB', 'ON', 'QR', 'ZY')
     )
 
     print(''.join(enigma.write('Hello World')))
