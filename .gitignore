@@ -4,3 +4,8 @@
 # Python environment
 __pycache__
 venv
+
+# Packaging and distribution
+dist
+build
+*.egg-info
